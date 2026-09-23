@@ -123,9 +123,9 @@ async def registrar_corredor(
     fecha_nacimiento: str = Form(...),
     whatsapp: str = Form(...),
     telefono_emergencia: str = Form(...),
-    grupo_sanguineo: str = Form(...),
     distancia: str = Form(...),
     talle_remera: str = Form(...),
+    grupo_sanguineo: Optional[str] = Form(None),
     certificado_pdf: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
@@ -135,7 +135,7 @@ async def registrar_corredor(
         raise HTTPException(status_code=400, detail="El correo electrónico ya se encuentra registrado.")
     
     pdf_path = None
-    if certificado_pdf:
+    if certificado_pdf and certificado_pdf.filename:
         file_ext = certificado_pdf.filename.split(".")[-1]
         file_name = f"certificado_{dni}.{file_ext}"
         pdf_path = os.path.join(UPLOAD_DIR, file_name)
@@ -151,7 +151,7 @@ async def registrar_corredor(
         fecha_nacimiento=fecha_nacimiento,
         whatsapp=whatsapp,
         telefono_emergencia=telefono_emergencia,
-        grupo_sanguineo=grupo_sanguineo,
+        grupo_sanguineo=grupo_sanguineo or "No especificado",
         certificado_medico_url=pdf_path,
         distancia=distancia,
         talle_remera=talle_remera,

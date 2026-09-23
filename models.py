@@ -13,14 +13,16 @@ class Usuario(Base):
     fecha_nacimiento = Column(String, nullable=False)
     whatsapp = Column(String, nullable=False)
     telefono_emergencia = Column(String, nullable=False)
-    grupo_sanguineo = Column(String, nullable=False)
+    
+    # Datos opcionales
+    grupo_sanguineo = Column(String, nullable=True)
     certificado_medico_url = Column(String, nullable=True)
     
     distancia = Column(String, nullable=False)  # 5K, 10K, 21K
     talle_remera = Column(String, nullable=False)  # S, M, L, XL, XXL
     qr_code = Column(String, unique=True, nullable=False)
     
-    # Control estricto de acreditación (Evita entregas dobles)
+    # Control estricto de acreditación
     acreditado = Column(Boolean, default=False)
     fecha_acreditacion = Column(DateTime, nullable=True)
 
@@ -30,5 +32,5 @@ class FotoComunidad(Base):
     id = Column(Integer, primary_key=True, index=True)
     usuario_nombre = Column(String, nullable=False)
     imagen_url = Column(String, nullable=False)
-    categoria = Column(String, default="General")  # Previas, Carrera, Medallas
+    categoria = Column(String, default="General")
     fecha_subida = Column(DateTime, default=datetime.datetime.utcnow)
