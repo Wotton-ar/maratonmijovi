@@ -4,8 +4,8 @@ import os
 # Asegura que el backend reconozca la raíz de los archivos
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from database import SessionLocal, engine
-import models
+from Backend.app.database import SessionLocal, engine
+import Backend.app.models as models
 
 # Recrea las tablas en la base de datos si no existen
 models.Base.metadata.create_all(bind=engine)

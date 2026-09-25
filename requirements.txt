@@ -1,8 +1,5 @@
-fastapi
-uvicorn
-sqlalchemy
-psycopg2-binary
-pydantic
-pydantic-settings
-python-dotenv
-fastapi-mail
+fastapi>=0.112.0
+uvicorn>=0.30.0
+sqlalchemy>=2.0.30
+pydantic>=2.7.0
+python-dotenv>=1.0.1
