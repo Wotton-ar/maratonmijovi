@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import shutil
 import os
-import uuid
+import mercadopago
 
 from .database import engine, Base, get_db
 from . import models
@@ -29,6 +29,9 @@ app.add_middleware(
 
 UPLOAD_DIR = "app/static/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# SDK de Mercado Pago (Reemplaza con tu Access Token de producción o prueba)
+sdk = mercadopago.SDK("APP_USR-tu-access-token-de-mercado-pago-aqui")
 
 @app.get("/")
 def read_root():
@@ -93,6 +96,36 @@ def get_corredor_by_dni(dni: str, db: Session = Depends(get_db)):
         "certificado_medico_url": True,
         "tiempo_oficial": "00:48:30"
     }
+
+@app.post("/api/crear-preferencia-pago")
+def crear_preferencia_pago(data: dict):
+    try:
+        preference_data = {
+            "items": [
+                {
+                    "title": f"Inscripción Maratón Mijovi - {data.get('distancia', '10K')}",
+                    "quantity": 1,
+                    "unit_price": float(data.get("precio", 10000))
+                }
+            ],
+            "payer": {
+                "email": data.get("email", "corredor@mijovi.com")
+            },
+            "back_urls": {
+                "success": "https://maratonmijovi-production.up.railway.app/pago-exitoso",
+                "failure": "https://maratonmijovi-production.up.railway.app/pago-fallido",
+                "pending": "https://maratonmijovi-production.up.railway.app/pago-pendiente"
+            },
+            "auto_return": "approved",
+        }
+        preference_response = sdk.preference().create(preference_data)
+        preference = preference_response["response"]
+        return {
+            "init_point": preference["init_point"],
+            "sandbox_init_point": preference.get("sandbox_init_point")
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/registro", status_code=status.HTTP_201_CREATED)
 async def registrar_corredor(
@@ -176,7 +209,7 @@ def get_albumes():
             "titulo": "Álbum Oficial - Maratón Mijovi",
             "subtitulo": "Galería oficial de fotos del evento en Google Fotos",
             "fecha_evento": "Abril 2027",
-            "portada_url": "",  # Sin imágenes externas de relleno
+            "portada_url": "",
             "google_photos_url": "https://photos.google.com/share/AF1QipOobX7UJw1vuPIw4p936Me9Kr6cB0PLaVr-PEOFCOmtqHSfk2J5Yfng6RXfbQ5thg?pli=1&key=NVF5cTBLTjdnejg5VVZkYmUwOVNjNG1sOU95eElR"
         }
     ]

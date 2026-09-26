@@ -1,17 +1,7 @@
-# Entornos virtuales de Python
-venv/
-env/
-.venv/
-
-# Base de datos SQLite local (para no sobreescribir la base de datos real)
+node_modules/
+.expo/
+dist/
+build/
 *.db
-*.sqlite3
-sql_app.db
-maraton_mijovi.db
-
-# Cache de Python y compilados
 __pycache__/
-*.py[cod]
-
-# Variables de entorno secretas (como contraseñas SMTP o URLs privadas)
-.env
+venv/
